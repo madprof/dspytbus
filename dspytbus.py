@@ -56,9 +56,12 @@ class Component(Thread):
 
     Remember to call __init__() from your constructor! Subclass
     this and implement handle_message() to actually do stuff.
-    Don't override anything but __init__() and handle()!
+    Don't override anything but __init__() and handle_message()!
     """
     def __init__(self):
+        """
+        Initialize a new component.
+        """
         super(Component, self).__init__()
         self.daemon = True
         self._connected = Event()
@@ -66,6 +69,11 @@ class Component(Thread):
         self._queue = Queue()
 
     def connect_bus(self, bus):
+        """
+        Connect component to a bus.
+
+        Don't call directly, use the attach() function instead!
+        """
         assert isinstance(bus, Bus)
         assert bus is not self
         assert self._bus is None
@@ -73,18 +81,39 @@ class Component(Thread):
         self._connected.set()
 
     def send_message(self, message):
+        """
+        Send a message out of this component.
+
+        Don't call this from the outside!
+        """
         if self._bus is None:
             self._connected.wait()
         message.__origin__ = self
         self._bus.receive_message(message)
 
     def receive_message(self, message):
+        """
+        Receive a message.
+
+        This is called by the bus the component is attached to.
+        Don't call it directly!
+        """
         self._queue.put(message)
 
     def handle_message(self, _message):
+        """
+        Handle a message.
+
+        You must override this!
+        """
         assert False, "override this"
 
     def run(self):
+        """
+        The component receives and dispatches messages here.
+
+        Don't override this!
+        """
         while True:
             msg = self._queue.get()
             self.handle_message(msg)
@@ -96,18 +125,31 @@ class Bus(Component):
     Don't subclass this. Just use it.
     """
     def __init__(self):
+        """
+        Initialize a new bus.
+        """
         super(Bus, self).__init__()
         self._lock = Lock()
         self._components = []
         self._interests = []
 
     def connect_component(self, component, interest):
+        """
+        Connect a component to this bus.
+
+        Don't call directly, use the attach() function instead!
+        """
         assert component is not self
         with self._lock:
             self._components.append(component)
             self._interests.append(interest)
 
     def run(self):
+        """
+        The bus receives and dispatches messages here.
+
+        Don't override this!
+        """
         while True:
             msg = self._queue.get()
             with self._lock:
@@ -121,14 +163,25 @@ class Bus(Component):
                 self.send_message(msg)
 
     def start_bus(self, message):
+        """
+        Start this bus with an initial message. Note that starting
+        a bus will also start all components attached to the bus.
+        After they are all running, the given message will be sent
+        to every component on the bus.
+        """
         self.start()
         with self._lock:
-            for c in self._components:
-                c.start()
+            for com in self._components:
+                com.start()
         message.__origin__ = self
         self._queue.put(message)
         signal.pause()
 
 def attach(bus, component, interest):
+    """
+    Attach a component interested in certain messages to a bus.
+    Note that "interest" should be a class, type, or tuple of
+    these (it uses isinstance internally).
+    """
     bus.connect_component(component, interest)
     component.connect_bus(bus)
