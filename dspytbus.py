@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from threading import Thread, Lock, Event
 from Queue import Queue
+import signal
 
 class Message(object):
     """
@@ -42,6 +43,7 @@ class Component(Thread):
     """
     def __init__(self):
         super(Component, self).__init__()
+        self.daemon = True
         self._connected = Event()
         self._bus = None
         self._queue = Queue()
@@ -93,8 +95,20 @@ class Bus(Component):
             with self._lock:
                 components = self._components[:]
                 interests = self._interests[:]
-            for com, intr in components, interests:
+            for com, intr in zip(components, interests):
                 if isinstance(msg, intr):
                     com.receive_message(msg)
             if self._bus is not None and self._connected.is_set():
                 self.send_message(msg)
+
+    def start_bus(self, message):
+        self.start()
+        with self._lock:
+            for c in self._components:
+                c.start()
+        self._queue.put(message)
+        signal.pause()
+
+def attach(bus, component, interest):
+    bus.connect_component(component, interest)
+    component.connect_bus(bus)
