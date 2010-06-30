@@ -32,30 +32,69 @@ class Message(object):
     """
     pass
 
-class Component(object):
+class Component(Thread):
     """
     Components send and receive messages.
 
-    Remember to call __init__() from your constructor!
+    Remember to call __init__() from your constructor! Subclass
+    this and implement handle_message() to actually do stuff.
+    Don't override anything but __init__() and handle()!
     """
     def __init__(self):
-        """
-        """
-        pass
+        super(Component, self).__init__()
+        self._connected = Event()
+        self._bus = None
+        self._queue = Queue()
+
+    def connect_bus(self, bus):
+        assert isinstance(bus, Bus)
+        assert bus is not self
+        assert self._bus is None
+        self._bus = bus
+        self._connected.set()
+
+    def send_message(self, message):
+        if self._bus is None:
+            self._connected.wait()
+        self._bus.receive_message(message)
+
+    def receive_message(self, message):
+        self._queue.put(message)
+
+    def handle_message(self, _message):
+        assert False, "override this"
+
+    def run(self):
+        while True:
+            msg = self._queue.get()
+            self.handle_message(msg)
 
 class Bus(Component):
     """
     Busses broadcast/route messages between components.
 
-    Remember to call __init__() from your constructor!
+    Don't subclass this. Just use it.
     """
     def __init__(self):
-        """
-        """
-        pass
+        super(Bus, self).__init__()
+        self._lock = Lock()
+        self._components = []
+        self._interests = []
 
-def test():
-    pass
+    def connect_component(self, component, interest):
+        assert component is not self
+        with self._lock:
+            self._components.append(component)
+            self._interests.append(interest)
 
-if __name__ == "__main__":
-    test()
+    def run(self):
+        while True:
+            msg = self._queue.get()
+            with self._lock:
+                components = self._components[:]
+                interests = self._interests[:]
+            for com, intr in components, interests:
+                if isinstance(msg, intr):
+                    com.receive_message(msg)
+            if self._bus is not None and self._connected.is_set():
+                self.send_message(msg)
