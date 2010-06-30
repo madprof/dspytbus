@@ -75,6 +75,7 @@ class Component(Thread):
     def send_message(self, message):
         if self._bus is None:
             self._connected.wait()
+        message.__origin__ = self
         self._bus.receive_message(message)
 
     def receive_message(self, message):
@@ -113,9 +114,10 @@ class Bus(Component):
                 components = self._components[:]
                 interests = self._interests[:]
             for com, intr in zip(components, interests):
-                if isinstance(msg, intr):
+                if isinstance(msg, intr) and msg.__origin__ is not com:
                     com.receive_message(msg)
             if self._bus is not None and self._connected.is_set():
+                msg.__origin__ = self # relabel across busses
                 self.send_message(msg)
 
     def start_bus(self, message):
@@ -123,6 +125,7 @@ class Bus(Component):
         with self._lock:
             for c in self._components:
                 c.start()
+        message.__origin__ = self
         self._queue.put(message)
         signal.pause()
 
