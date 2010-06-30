@@ -1,3 +1,6 @@
+# dspytbus.py - the Desperately Silly PYthon Threaded message BUS
+# See files README and COPYING for copyright and licensing details.
+
 from dspytbus import Message, Component, Bus, attach
 
 class Ping(Message):
@@ -7,12 +10,12 @@ class Pong(Message):
 
 class Maddy(Component):
     def handle_message(self, message):
-        print "Maddy GOT", message
+        print "Maddy got", message
         self.send_message(Pong())
 
 class Mission(Component):
     def handle_message(self, message):
-        print "Mission GOT", message
+        print "Mission got", message
         self.send_message(Ping())
 
 bus = Bus()

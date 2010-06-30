@@ -1,20 +1,37 @@
+# dspytbus.py - the Desperately Silly PYthon Threaded message BUS
+# See files README and COPYING for copyright and licensing details.
+
 """
 dspytbus.py - the Desperately Silly PYthon Threaded message BUS
 
-Copyright (c) 2010 by |ALPHA| Mad Professor <alpha.mad.professor@gmail.com>.
+First off, this is probably a really bad idea... Now that *that's*
+out of the way, what is it?
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+I got frustrated with the complexity of the otherwise excellent
+circuits framework by my pal prologic. I love his stuff, but it's
+just so full of implicit assumptions that it's hard to get one's
+head around starting out. I appreciate how well it all works in
+his hands, but it sure doesn't in mine, at least not yet.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+All my frustration lead me to think about alternative ways to
+structure a component framework, and one way I couldn't get out
+of my head was based on lots of threads. That's what dspytbus is.
+And yes, it's pronounced "despite-bus" because I was frustrated.
+Did I say that already?
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+In dspytbus, every component is a thread. Components get attached
+to busses which are also threads. Busses can be attached to other
+busses, so they are really also components at the same time. The
+components communicate through messages, and when you attach them
+to a bus, you can define what types of messages that component is
+interested in.
+
+That's pretty much it. Note that this is a quick prototype that I
+wrote to get this darn idea out of my head, not a framework ready
+for production use. I think it *could* be developed into something
+useful eventually, but I doubt it'll be me who does that. Please
+feel free to fork and make things better, that's why I threw it
+on github.com after all.
 """
 
 from threading import Thread, Lock, Event
