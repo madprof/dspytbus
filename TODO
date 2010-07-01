@@ -1,0 +1,12 @@
+- separate handling of messages from component itself; allow multiple handling methods;
+  use naming convention (bad) or decorators (good) to mark what message(s) are handled
+
+- allow component to run it's own code in thread; requires a call to some "pump" method
+  to keep the message handling flowing; alternative is to require setting up a timer to
+  inject messages for the component at regular intervals; still, if component wants to
+  block in a read() that won't work; see multiprocessing
+
+- multiprocessing.Queue exposes fileno() and can be used with select(); components that
+  want to block in a read() (or whatever) could add that fileno() and handle messages
+  that way; framework doesn't share data directly between components anyway, so we don't
+  need threading, just concurrency
