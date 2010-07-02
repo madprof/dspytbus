@@ -9,7 +9,12 @@ create a new bus process
 Sorry, no arguments for now, so you can only create the default bus process.
 """
 
+import logging
 from dspytbus import Bus
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s - %(levelname)s - %(message)s"
+    )
     Bus().start()
