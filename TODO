@@ -10,3 +10,7 @@
   want to block in a read() (or whatever) could add that fileno() and handle messages
   that way; framework doesn't share data directly between components anyway, so we don't
   need threading, just concurrency
+
+- modifying a running system's component structure could be more carefully constrained;
+  should it? hot plugging into a bus would open up some nice features after all; this
+  also seems easier with multiprocessing since no direct object references exist
