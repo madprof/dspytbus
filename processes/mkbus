@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+# dspytbus.py - the Desperately Silly PYthon Threaded message BUS
+# See files README and COPYING for copyright and licensing details.
+
+"""
+create a new bus process
+
+Sorry, no arguments for now, so you can only create the default bus process.
+"""
+
+from dspytbus import Bus
+
+if __name__ == "__main__":
+    Bus().start()
