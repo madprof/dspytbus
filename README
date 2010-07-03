@@ -2,6 +2,7 @@ dspytbus.py - the Desperately Silly PYthon Threaded message BUS
 
 Copyright (c) 2010 by |ALPHA| Mad Professor <alpha.mad.professor@gmail.com>.
 
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -14,3 +15,9 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses/.
+
+
+There are two (soon three?) versions of the same (bad?) idea here,
+all hacked to a point where they sort of work but not really
+useful. I just can't stop playing with this stuff! I wish I could,
+then I could get actual work done...
