@@ -14,3 +14,16 @@
 - modifying a running system's component structure could be more carefully constrained;
   should it? hot plugging into a bus would open up some nice features after all; this
   also seems easier with multiprocessing since no direct object references exist
+
+- once you move beyond very simple things, some kind of naming service may be useful,
+  especially for the distributed (multiprocessing) version; also since busses can be
+  nested, a nested naming scheme seems appropriate; let's use path names? pretend you
+  are component "A" hooked into some bus; for you, "/" is the bus you are on; for all
+  components on this bus, "/" is the same bus; some other component would use "/A" to
+  refer to "A"; of course that would never happen *except* if we want to determine if
+  a certain component sits on the bus with us; there may be another bus "B" of course,
+  and you refer to it as "/B"; from your point of view a component "C" on bus "B" is
+  "/B/C" and so on; what if yous bus is hooked into some other bus? for components on
+  that bus you are not "A" and not "/A" but "/yourbusname/A" and so on; bad idea to
+  think of "A" as a specific component though, it's more of a "type" since multitple
+  components of that type maybe be around (beyond your control really)
