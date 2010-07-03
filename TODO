@@ -27,3 +27,10 @@
   that bus you are not "A" and not "/A" but "/yourbusname/A" and so on; bad idea to
   think of "A" as a specific component though, it's more of a "type" since multitple
   components of that type maybe be around (beyond your control really)
+
+- for the distributed approach, using pickles is a somewhat dubious proposition; after
+  all, there's really no good reason to think every component is best written in Python;
+  also, the bus really doesn't need to do much analysis of the message except to see
+  if it's of interest to anybody; some language-agnostic message format may be better;
+  or make the message format pluggable, now there's a thought; JSON actually looks ok
+  and there's JSON-RPC which we could leverage
